@@ -3,7 +3,6 @@ import pandas as pd
 from openai import OpenAI
 import time
 from io import BytesIO  # Ensure this is imported for Excel conversion
-client = OpenAI()
 
 # List of officially supported languages by GPT-4 (commonly supported by models)
 SUPPORTED_LANGUAGES = ["en", "fr", "de", "es", "it", "pt", "ru", "zh", "ja", "ko", "ar", "nl", "sv", "no", "da"]
@@ -13,7 +12,7 @@ api_key = st.text_input("Enter your OpenAI API key", type="password")
 
 # Check if the API key is provided
 if api_key:
-    client.api_key = api_key
+    client = OpenAI(api_key)
 
     # Load CSV or Excel file
     uploaded_file = st.file_uploader("Upload your CSV or Excel file", type=["csv", "xlsx"])
