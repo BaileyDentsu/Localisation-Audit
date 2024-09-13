@@ -8,11 +8,11 @@ from io import BytesIO  # Ensure this is imported for Excel conversion
 SUPPORTED_LANGUAGES = ["en", "fr", "de", "es", "it", "pt", "ru", "zh", "ja", "ko", "ar", "nl", "sv", "no", "da"]
 
 # User input for API key
-api_key = st.text_input("Enter your OpenAI API key", type="password")
+user_api_key = st.text_input("Enter your OpenAI API key", type="password")
 
 # Check if the API key is provided
-if api_key:
-    client = OpenAI(api_key)
+if user_api_key:
+    client = OpenAI(api_key=user_api_key)
 
     # Load CSV or Excel file
     uploaded_file = st.file_uploader("Upload your CSV or Excel file", type=["csv", "xlsx"])
