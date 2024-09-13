@@ -13,7 +13,7 @@ api_key = st.text_input("Enter your OpenAI API key", type="password")
 
 # Check if the API key is provided
 if api_key:
-    openai.api_key = api_key
+    client.api_key = api_key
 
     # Load CSV or Excel file
     uploaded_file = st.file_uploader("Upload your CSV or Excel file", type=["csv", "xlsx"])
