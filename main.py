@@ -69,7 +69,7 @@ if user_api_key:
                             max_tokens=100,
                             temperature=0.1
                         )
-                        return response.choices[0].message.strip()
+                        return response.choices[0].message
                     except Exception as e:
                         return f"Error: {e}"
 
