@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
 import openai
-from io import StringIO
 import time
+
+# List of officially supported languages by GPT-4 (commonly supported by models)
+SUPPORTED_LANGUAGES = ["en", "fr", "de", "es", "it", "pt", "ru", "zh", "ja", "ko", "ar", "nl", "sv", "no", "da"]
 
 # User input for API key
 api_key = st.text_input("Enter your OpenAI API key", type="password")
@@ -21,10 +23,22 @@ if api_key:
         # Multiselect columns
         selected_columns = st.multiselect("Select the columns you want to concatenate", df.columns)
         
+        # Allow user to select which languages to detect
+        selected_languages = st.multiselect(
+            "Select the languages to detect",
+            SUPPORTED_LANGUAGES,
+            default=["en", "fr", "de"]
+        )
+        
+        # Format the languages for the prompt (e.g., 'en, fr, de')
+        language_scope = ', '.join(selected_languages)
+
         # Allow prompt customization
         prompt_template = st.text_area(
             "Customize your prompt",
-            value="work out the percentage of each language used in this string: {Concat}. Return the output in this format: en: 20%, de: 80%."
+            value=f"Input: {{inputText}}. Task 1: Remove company branding, keep product branding. "
+                  f"Task 2: Return language percentages ({language_scope}) in this format: en: 20%, fr: 40%. "
+                  "Omit 0%. Ensure total = 100%. Only return task 2."
         )
         
         # Button to start analysis
@@ -38,13 +52,14 @@ if api_key:
                 results = []
                 
                 # Function to send prompt to OpenAI
-                def get_openai_response(text, prompt_template):
-                    prompt = prompt_template.replace("{Concat}", text)
+                def get_openai_response(language_scope, text, prompt_template):
+                    prompt = prompt_template.replace("{inputText}", text)
+                    prompt = prompt_template.replace("{language_scope}", language_scope)
                     try:
                         response = openai.Completion.create(
-                            engine="text-davinci-003",  # Choose the model
+                            engine="gpt-4o",  # Using GPT-4o model
                             prompt=prompt,
-                            max_tokens=60,
+                            max_tokens=100,
                             n=1,
                             stop=None,
                             temperature=0.5
@@ -55,7 +70,7 @@ if api_key:
                 
                 # Loop over rows and get API responses
                 for idx, row in df.iterrows():
-                    response = get_openai_response(row['Concatenated'], prompt_template)
+                    response = get_openai_response(language_scope, row['Concatenated'], prompt_template)
                     results.append(response)
                     progress_bar.progress((idx + 1) / len(df))
                     time.sleep(0.18)  # Adjusted delay to 0.18 seconds to stay within rate limits
