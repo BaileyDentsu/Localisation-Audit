@@ -84,9 +84,24 @@ if api_key:
                 # Display the updated DataFrame
                 st.write(df)
 
-                # Option to download the new DataFrame with responses
-                csv = df.to_csv(index=False)
-                st.download_button("Download CSV", data=csv, mime='text/csv')
+                # Download DataFrame as Excel file
+                def convert_df_to_excel(df):
+                    output = BytesIO()
+                    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+                    df.to_excel(writer, index=False, sheet_name='Sheet1')
+                    writer.save()
+                    processed_data = output.getvalue()
+                    return processed_data
+
+                excel_data = convert_df_to_excel(df)
+
+                # Provide download button for Excel
+                st.download_button(
+                    label="Download Excel",
+                    data=excel_data,
+                    file_name="openai_responses.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
             else:
                 st.warning("Please select at least one column to concatenate.")
     else:
