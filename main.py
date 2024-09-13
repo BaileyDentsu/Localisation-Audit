@@ -61,7 +61,7 @@ if user_api_key:
                     prompt = prompt.replace("{language_scope}", language_scope)
                     try:
                         response = client.chat.completions.create(
-                            model="gpt-4o",  # Ensure this model is available to you
+                            model="gpt-4o-2024-08-06",  # Ensure this model is available to you
                             messages=[
                                 {"role": "system", "content": "You are an assistant that analyzes language usage."},
                                 {"role": "user", "content": prompt}
