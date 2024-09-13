@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
-import openai.sync as openai
+from openai import OpenAI
 import time
 from io import BytesIO  # Ensure this is imported for Excel conversion
+client = OpenAI()
 
 # List of officially supported languages by GPT-4 (commonly supported by models)
 SUPPORTED_LANGUAGES = ["en", "fr", "de", "es", "it", "pt", "ru", "zh", "ja", "ko", "ar", "nl", "sv", "no", "da"]
@@ -60,16 +61,16 @@ if api_key:
                     prompt = prompt_template.replace("{inputText}", text)
                     prompt = prompt.replace("{language_scope}", language_scope)
                     try:
-                        response = openai.ChatCompletion.create(
+                        response = client.chat.completions.create(
                             model="gpt-4o",  # Ensure this model is available to you
                             messages=[
                                 {"role": "system", "content": "You are an assistant that analyzes language usage."},
                                 {"role": "user", "content": prompt}
                             ],
                             max_tokens=100,
-                            temperature=0.5
+                            temperature=0.1
                         )
-                        return response.choices[0].message['content'].strip()
+                        return response.choices[0].message.strip()
                     except Exception as e:
                         return f"Error: {e}"
 
@@ -84,7 +85,7 @@ if api_key:
                 df['OpenAI_Response'] = results
 
                 # Display the updated DataFrame
-                st.write(df)
+                st.write(df[:50])
 
                 # Download DataFrame as Excel file
                 def convert_df_to_excel(df):
