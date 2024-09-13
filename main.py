@@ -14,11 +14,14 @@ if api_key:
     openai.api_key = api_key
     
     # Load CSV file
-    uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+    uploaded_file = st.file_uploader("Upload your CSV or Excel file", type=["csv", "xlsx"])
 
     # Check if file is uploaded
     if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
+        if uploaded_file.name.endswith(".csv"):
+            df = pd.read_csv(uploaded_file)
+        elif uploaded_file.name.endswith(".xlsx"):
+            df = pd.read_excel(uploaded_file)
         
         # Multiselect columns
         selected_columns = st.multiselect("Select the columns you want to concatenate", df.columns)
