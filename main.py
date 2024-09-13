@@ -59,15 +59,13 @@ if api_key:
                     prompt = prompt_template.replace("{inputText}", text)
                     prompt = prompt_template.replace("{language_scope}", language_scope)
                     try:
-                        response = openai.Completion.create(
-                            engine="gpt-4o",  # Using GPT-4o model
-                            prompt=prompt,
+                        response = openai.ChatCompletion.create(
+                            model="gpt-4o",  # Using GPT-4o model
+                            messages={"role": "user", "content": prompt},
                             max_tokens=100,
-                            n=1,
-                            stop=None,
                             temperature=0.5
                         )
-                        return response.choices[0].text.strip()
+                        return response.choices[0].message['content'].strip()
                     except Exception as e:
                         return f"Error: {e}"
                 
