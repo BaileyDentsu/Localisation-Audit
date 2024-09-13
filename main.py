@@ -80,7 +80,7 @@ if api_key:
                 df['OpenAI_Response'] = results
                 
                 # Display the updated DataFrame
-                st.write(df)
+                st.write(df[:50])
 
                 # Download DataFrame as Excel file
                 def convert_df_to_excel(df):
